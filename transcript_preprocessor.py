@@ -24,6 +24,8 @@ class Transcript_Preprocessor:
     audio_format = ""
 
     class ZipPP(yt_dlp.postprocessor.PostProcessor):
+        # Custom PostProcessor to zip up the audio files as we download each one
+        # Prevents a playlist from taking up too much space
         zip_path = ""
 
         def run(self, info):
@@ -33,8 +35,8 @@ class Transcript_Preprocessor:
             return [], info
 
 
-    def __init__(self, playlist_url, zip_path, csv_path, audio_format="wav"):
-        # Check for FFMPEG
+    def __init__(self, playlist_url, zip_path, csv_path, audio_format="m4a"):
+        # Check for FFMPEG, needed for audio conversion later on
         try:
             subprocess.run(["ffmpeg", "-version"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except FileNotFoundError:
@@ -51,13 +53,13 @@ class Transcript_Preprocessor:
 
     def download_audio(self, url):
         options = {
-            "format": self.audio_format, #BUG: Won't actually output .wav
+            "format": self.audio_format,
             'postprocessors': [{  
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': self.audio_format,
                 }],
         }
-        with YoutubeDL() as ydl:
+        with YoutubeDL(options) as ydl:
             ZipPP = self.ZipPP()
             ZipPP.zip_path = self.zip_path
             ydl.add_post_processor(ZipPP)
@@ -68,15 +70,15 @@ class Transcript_Preprocessor:
     def process_json(self, json_dict, csv_file):
         entries = json_dict["entries"]
 
-        sample = ""
+        sample = "" # Sample is used for testing purposes
 
-        with open(csv_file, "a") as f:
+        with open(csv_file, "a", newline='') as f:
             writer = csv.writer(f, quoting=csv.QUOTE_ALL)
             writer.writerow(["title", "url", "upload date"])
             for entry in entries:
                 writer.writerow([entry["title"], entry["webpage_url"], entry["upload_date"]])
                 
-        with open(csv_file, "r") as f:
+        with open(csv_file, "r") as f: # Can be safely ignored if not running tests
             sample = sample + f.readline()
             sample = sample + f.readline()
 
@@ -91,4 +93,4 @@ class Transcript_Preprocessor:
 
 
 if __name__ == "__main__":
-    tp = Transcript_Preprocessor()
+    tp = Transcript_Preprocessor(input("Enter YouTube URL: "),"audioFiles.zip", "livestreamInfo.csv")

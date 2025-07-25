@@ -34,9 +34,7 @@ if __name__ == "__main__":
         expected_json = json.loads(f.read())
     
     _, test_json = test(tp.download_audio, test_url, expected=expected_json)
-    print(type(test_json))
 
-    csv_expected = '''"title","url","upload date"
-"I Played 100 Hours of Lord of the Rings Online","https://www.youtube.com/watch?v=hk9zDlLl7UM","20250724"'''
+    csv_expected = '''"title","url","upload date"\n"I Played 100 Hours of The Lord of the Rings Online","https://www.youtube.com/watch?v=hk9zDlLl7UM","20250724"'''
     test(tp.process_json, test_json, test_csv_path, expected=csv_expected)
 
