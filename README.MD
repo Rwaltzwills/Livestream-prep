@@ -1,0 +1,1 @@
+Used to download audio files from a playlist, zip up the resulting .wavs, and generate a CSV with info necessary for posting on the OSRS Wiki.

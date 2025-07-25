@@ -1,0 +1,9 @@
+/.git
+/Include
+/Lib
+/Scripts
+/share
+/Test
+/__pycache__
+
+pyvenv.cfg
