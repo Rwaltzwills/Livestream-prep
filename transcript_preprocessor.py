@@ -51,14 +51,16 @@ class Transcript_Preprocessor:
         json_info = self.download_audio(self.playlist_url)
         self.process_json(json_info, self.csv_path)
 
-    def download_audio(self, url):
-        options = {
-            "format": self.audio_format,
-            'postprocessors': [{  
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': self.audio_format,
-                }],
-        }
+    def download_audio(self, url, options = {}):
+        # Asssign necessary postprocessing parameters if not supplied
+        if not options.get('format'):
+            options['format'] = self.audio_format
+        if not options.get('postprocessors'):
+            options['postprocessors'] = [{
+                    'key': 'FFmpegExtractAudio',
+                    'preferredcodec': self.audio_format
+                 }]
+            
         with YoutubeDL(options) as ydl:
             ZipPP = self.ZipPP()
             ZipPP.zip_path = self.zip_path
@@ -72,7 +74,7 @@ class Transcript_Preprocessor:
 
         sample = "" # Sample is used for testing purposes
 
-        with open(csv_file, "a", newline='') as f:
+        with open(csv_file, "a", encoding='utf8', newline='') as f:
             writer = csv.writer(f, quoting=csv.QUOTE_ALL)
             writer.writerow(["title", "url", "upload date"])
             for entry in entries:
