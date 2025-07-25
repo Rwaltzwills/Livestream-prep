@@ -33,7 +33,7 @@ if __name__ == "__main__":
     with open("Test/test_expected.txt", "r") as f:
         expected_json = json.loads(f.read())
     
-    test_json = test(tp.download_audio, test_url, expected=expected_json)
+    _, test_json = test(tp.download_audio, test_url, expected=expected_json)
     print(type(test_json))
 
     csv_expected = '''"title","url","upload date"

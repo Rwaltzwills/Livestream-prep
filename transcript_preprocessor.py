@@ -51,7 +51,7 @@ class Transcript_Preprocessor:
 
     def download_audio(self, url):
         options = {
-            "format": self.audio_format,
+            "format": self.audio_format, #BUG: Won't actually output .wav
             'postprocessors': [{  
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': self.audio_format,
@@ -63,8 +63,7 @@ class Transcript_Preprocessor:
             ydl.add_post_processor(ZipPP)
             info = ydl.extract_info(url, download=True)
 
-        #BUG: Keeps returning as tuple? Testing unsat
-        return json.dumps(ydl.sanitize_info(info))
+        return info
 
     def process_json(self, json_dict, csv_file):
         entries = json_dict["entries"]
@@ -76,7 +75,8 @@ class Transcript_Preprocessor:
             writer.writerow(["title", "url", "upload date"])
             for entry in entries:
                 writer.writerow([entry["title"], entry["webpage_url"], entry["upload_date"]])
-
+                
+        with open(csv_file, "r") as f:
             sample = sample + f.readline()
             sample = sample + f.readline()
 
@@ -84,7 +84,7 @@ class Transcript_Preprocessor:
     
     @staticmethod
     def zip_up(zip_path, zip_target):
-        with ZipFile(zip_path, 'w') as zip:
+        with ZipFile(zip_path, 'a') as zip:
             zip.write(zip_target)
         os.remove(zip_target)
 
