@@ -42,7 +42,7 @@ class Transcript_Preprocessor:
         except FileNotFoundError:
             raise Exception("FFMPEG not found. Ending process.")
         
-        self.playlist = playlist_url
+        self.playlist_url = playlist_url
         self.zip_path = zip_path
         self.csv_path = csv_path
         self.audio_format = audio_format
@@ -93,4 +93,6 @@ class Transcript_Preprocessor:
 
 
 if __name__ == "__main__":
-    tp = Transcript_Preprocessor(input("Enter YouTube URL: "),"audioFiles.zip", "livestreamInfo.csv")
+    url = input("Enter YouTube URL: ")
+    tp = Transcript_Preprocessor(url,"Results/audioFiles.zip", "Results/livestreamInfo.csv")
+    tp.run()
